@@ -1,0 +1,97 @@
+<!doctype html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.0/jquery.min.js"></script>
+  <title>WebSocketデモ</title>
+  <style>
+    * {
+      margin: 0;
+    }
+
+    table, tr, th, td {
+      border: 1px solid #000;
+      background: white;
+    }
+
+    th {
+      background: #DDF;
+    }
+
+    #commentpost li {
+      display: inline;
+    }
+  </style>
+  <script type="text/javascript">
+  <!--
+      var path = location.href;
+      path = path.replace("http:", "ws:");
+      var ws = new WebSocket(path + "/comment");
+
+      ws.onopen = function() {
+      }
+
+      var height = $(window).height();
+      ws.onmessage = function(msg) {
+          var comment = JSON.parse(msg.data);
+          var user = comment.premium == '1' ? 'P' :
+                     comment.premium == '3' ? 'O' : '';
+          var node = $('<tr>' +
+              '<td style="width:5%;text-align:center;">' + comment.no + '</td>' +
+              '<td style="width:90%;">' + comment.body + '</td>' +
+              '<td style="width:5%;text-align:center;">' + user + '</td>' +
+              '</tr>');
+          $("#comment_table").append(node);
+          win = $(window);
+          var bottom = win.scrollTop() + node.height() + 5;
+          win.scrollTop(bottom);
+      }
+
+      ws.onclose = function() {
+      }
+
+      $(function() {
+
+      $('#commenttrigger').click(function() {
+          $('#commentpost').toggle('fast');
+          return false;
+      });
+
+      $('#post').click(function() {
+          var comment = $('#comment')
+          var msg = comment.val();
+          ws.send(msg);
+          comment.val('');
+          return false;
+      });
+
+      });
+  -->
+  </script>
+</head>
+<body>
+  <ul id="commentpost" style="display:none;z-index:10;list-style:none;position:fixed;width:99%;background:white;padding:0.5ex;">
+    <li>
+      <input id="comment" type="text" name="post" value="" />
+    </li>
+    <li>
+      <input id="post" type="submit" name="submit" value="送信" />
+    </li>
+  </ul>
+
+  <table id="caption" style="width:100%;position:fixed;top:0;">
+    <tr>
+      <td colspan="3"><input type="button" id="commenttrigger" name="commenttrigger" value="コメント" /></td>
+    </tr>
+    <tr>
+      <th style="width:5%;">Num</th>
+      <th style="width:90%;">Comment</th>
+      <th style="width:5%;">P</th>
+    </tr>
+  </table>
+  <table id="comment_table" style="width:100%;margin-top:4em;">
+  </table>
+</body>
+</html>
